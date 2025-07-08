@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Privacy Policy and Terms</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      function switchTab(tab) {
+        const tabs = ["privacy-policy", "terms-of-service"];
+        tabs.forEach((id) => {
+          document.getElementById(id).classList.add("hidden");
+          document
+            .getElementById(id + "-tab")
+            .classList.remove("bg-teal-600", "text-white");
+        });
+        document.getElementById(tab).classList.remove("hidden");
+        document
+          .getElementById(tab + "-tab")
+          .classList.add("bg-teal-600", "text-white");
+      }
+    </script>
+  </head>
+  <body class="bg-gray-100 text-gray-800">
+    <div class="bg-[#f4ebd0] min-h-screen py-10">
+      <div class="container mx-auto px-6">
+        <!-- Cabin Selection Section -->
+        <h2 class="text-2xl font-bold text-gray-800 mb-5">Select Your Cabin</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <!-- Cabin Card -->
+          <div
+            class="bg-white p-5 rounded-lg shadow-lg flex flex-col items-center"
+          >
+            <img
+              src="path/to/cabin1.jpg"
+              alt="Cabin 1"
+              class="w-full rounded-lg mb-4"
+            />
+            <h3 class="text-lg font-semibold text-gray-800 mb-2">Cabin 1</h3>
+            <p class="text-gray-600 mb-4">Description of Cabin 1.</p>
+            <div class="flex items-center space-x-2">
+              <button
+                onclick="updateQuantity('cabin1', -1)"
+                class="px-3 py-1 bg-red-500 text-white rounded-full"
+              >
+                -
+              </button>
+              <span id="quantity-cabin1" class="text-lg font-bold">0</span>
+              <button
+                onclick="updateQuantity('cabin1', 1)"
+                class="px-3 py-1 bg-green-500 text-white rounded-full"
+              >
+                +
+              </button>
+            </div>
+          </div>
+          <!-- Repeat for other cabins -->
+          <div
+            class="bg-white p-5 rounded-lg shadow-lg flex flex-col items-center"
+          >
+            <img
+              src="path/to/cabin2.jpg"
+              alt="Cabin 2"
+              class="w-full rounded-lg mb-4"
+            />
+            <h3 class="text-lg font-semibold text-gray-800 mb-2">Cabin 2</h3>
+            <p class="text-gray-600 mb-4">Description of Cabin 2.</p>
+            <div class="flex items-center space-x-2">
+              <button
+                onclick="updateQuantity('cabin2', -1)"
+                class="px-3 py-1 bg-red-500 text-white rounded-full"
+              >
+                -
+              </button>
+              <span id="quantity-cabin2" class="text-lg font-bold">0</span>
+              <button
+                onclick="updateQuantity('cabin2', 1)"
+                class="px-3 py-1 bg-green-500 text-white rounded-full"
+              >
+                +
+              </button>
+            </div>
+          </div>
+          <!-- Add similar blocks for Cabin 3 and Cabin 4 -->
+        </div>
+
+        <!-- Customer Information Section -->
+        <h2 class="text-2xl font-bold text-gray-800 mt-10 mb-5">
+          Customer Information
+        </h2>
+        <form id="booking-form">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <input
+              type="text"
+              name="name"
+              placeholder="Name"
+              class="input-field"
+              required
+            />
+            <input
+              type="email"
+              name="email"
+              placeholder="Email"
+              class="input-field"
+              required
+            />
+            <input
+              type="tel"
+              name="contact"
+              placeholder="Contact"
+              class="input-field"
+              required
+            />
+            <input
+              type="text"
+              name="address1"
+              placeholder="Address Line 1"
+              class="input-field"
+              required
+            />
+            <input
+              type="text"
+              name="address2"
+              placeholder="Address Line 2"
+              class="input-field"
+            />
+            <input
+              type="text"
+              name="country"
+              placeholder="Country"
+              class="input-field"
+              required
+            />
+            <input
+              type="text"
+              name="state"
+              placeholder="State/City"
+              class="input-field"
+              required
+            />
+          </div>
+
+          <!-- Guest List Section -->
+          <h2 class="text-xl font-semibold text-gray-800 mt-10 mb-3">
+            Guest List
+          </h2>
+          <div id="guest-list" class="space-y-4">
+            <div class="flex space-x-4">
+              <input
+                type="text"
+                name="guest[]"
+                placeholder="Guest Name"
+                class="input-field flex-1"
+                required
+              />
+              <button
+                type="button"
+                onclick="removeGuest(this)"
+                class="px-3 py-2 bg-red-500 text-white rounded-md"
+              >
+                Remove
+              </button>
+            </div>
+          </div>
+          <button
+            type="button"
+            onclick="addGuest()"
+            class="mt-4 px-6 py-2 bg-blue-500 text-white rounded-md"
+          >
+            Add New Guest
+          </button>
+
+          <!-- Submit Button -->
+          <button
+            type="submit"
+            class="mt-6 px-6 py-3 bg-green-500 text-white font-semibold rounded-md w-full"
+          >
+            Submit Booking
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Tailwind CSS -->
+    <style>
+      .input-field {
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        width: 100%;
+      }
+    </style>
+    <script>
+      function updateQuantity(cabin, change) {
+        const quantityElement = document.getElementById(`quantity-${cabin}`);
+        let quantity = parseInt(quantityElement.innerText);
+        quantity = Math.max(0, quantity + change);
+        quantityElement.innerText = quantity;
+      }
+
+      function addGuest() {
+        const guestList = document.getElementById("guest-list");
+        const guestRow = document.createElement("div");
+        guestRow.className = "flex space-x-4";
+
+        guestRow.innerHTML = `
+        <input type="text" name="guest[]" placeholder="Guest Name" class="input-field flex-1" required>
+        <button type="button" onclick="removeGuest(this)" class="px-3 py-2 bg-red-500 text-white rounded-md">Remove</button>
+    `;
+
+        guestList.appendChild(guestRow);
+      }
+
+      function removeGuest(button) {
+        button.parentElement.remove();
+      }
+    </script>
+  </body>
+</html>
