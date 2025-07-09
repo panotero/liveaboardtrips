@@ -1,7 +1,11 @@
-<!-- Booking Stats -->
+<?php
+// var_dump($recent_bookings);
+
+?><!-- Booking Stats -->
+<!-- Dashboard Overview -->
 <div class="p-4 bg-white shadow rounded-lg mb-6">
 	<h2 class="text-2xl font-bold mb-6">📊 Dashboard Overview</h2>
-	<div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+	<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
 		<div class="bg-blue-50 p-4 rounded-lg shadow flex items-center justify-between">
 			<div>
 				<h3 class="text-sm font-medium text-blue-800">Booking Count</h3>
@@ -26,7 +30,7 @@
 	</div>
 </div>
 
-<!-- Booking Trends & Ratings Side-by-Side -->
+<!-- Booking Trends & Ratings -->
 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
 	<!-- Booking Trends Card -->
 	<div class="p-4 bg-white shadow rounded-lg">
@@ -58,43 +62,69 @@
 	</div>
 </div>
 
-<!-- Alpine.js (Required for carousel) -->
-<script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
-
-
 <!-- Recent Bookings Table -->
 <div class="p-4 bg-white shadow rounded-lg mb-6">
 	<h2 class="text-2xl font-bold mb-4">📃 Recent Bookings</h2>
-	<div class="overflow-auto">
-		<table class="min-w-full text-sm">
-			<thead class="bg-gray-100 text-gray-700">
+	<div class="overflow-auto max-h-[60vh]">
+		<table class="min-w-[640px] w-full text-sm">
+			<thead class="bg-gray-100 text-gray-700 sticky top-0">
 				<tr>
 					<th class="px-4 py-2 text-left">Booking ID</th>
 					<th class="px-4 py-2 text-left">Customer</th>
-					<th class="px-4 py-2 text-left">Vessel</th>
+					<th class="px-4 py-2 text-left">Trip Title</th>
 					<th class="px-4 py-2 text-left">Date</th>
 					<th class="px-4 py-2 text-left">Status</th>
+					<th class="px-4 py-2 text-left">Action</th>
 				</tr>
 			</thead>
 			<tbody>
-				<tr class="border-t">
-					<td class="px-4 py-2">BK00123</td>
-					<td class="px-4 py-2">John Doe</td>
-					<td class="px-4 py-2">MV Starlight</td>
-					<td class="px-4 py-2">2025-06-15</td>
-					<td class="px-4 py-2 text-green-600 font-semibold">Confirmed</td>
-				</tr>
-				<tr class="border-t">
-					<td class="px-4 py-2">BK00122</td>
-					<td class="px-4 py-2">Jane Smith</td>
-					<td class="px-4 py-2">MV Ocean Pearl</td>
-					<td class="px-4 py-2">2025-06-14</td>
-					<td class="px-4 py-2 text-yellow-600 font-semibold">Pending</td>
-				</tr>
+				<?php foreach ($recent_bookings as $booking):
+					$status_color = 'text-green-600';
+					switch ($booking['sbs_status']) {
+						case 'New':
+							$status_color = 'text-green-600';
+							break;
+						case 'Confirmed':
+							$status_color = 'text-green-800';
+							break;
+						case 'Payment Under Verification':
+							$status_color = 'text-yellow-600';
+							break;
+						case 'Paid':
+							$status_color = 'text-blue-600';
+							break;
+						case 'Declined':
+							$status_color = 'text-orange-600';
+							break;
+						case 'Cancelled':
+							$status_color = 'text-red-600';
+							break;
+					}
+				?>
+
+					<tr class="border-t">
+						<td class="px-4 py-2"><?= $booking['bt_id'] ?></td>
+						<td class="px-4 py-2"><?php echo  $booking['bui_first_name'] . ' ' . $booking['bui_last_name']; ?></td>
+						<td class="px-4 py-2"><?= $booking['s_schedule_title'] ?></td>
+						<td class="px-4 py-2"><?= $booking['bt_booking_date'] ?></td>
+						<td class="px-4 py-2 font-semibold <?= $status_color ?>"><?= $booking['sbs_status'] ?></td>
+						<td class="px-4 py-2">
+							<button onclick="handleRowClick(<?= $booking['bt_id'] ?>)" class="px-5 py-2 rounded-full bg-green-300 transition-transform transform hover:scale-105 hover:z-20 duration-300">
+								View Booking
+							</button>
+						</td>
+					</tr>
+				<?php endforeach; ?>
 			</tbody>
 		</table>
 	</div>
 </div>
+
+<!-- Alpine.js -->
+<script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+
+
+
 <script>
 	(function() {
 		let bookingCounts = {
@@ -170,5 +200,26 @@
 		document.getElementById('weekly').addEventListener('click', () => renderChart('weekly'));
 		document.getElementById('monthly').addEventListener('click', () => renderChart('monthly'));
 		document.getElementById('yearly').addEventListener('click', () => renderChart('yearly'));
+
+
 	})();
+
+	function handleRowClick(id) {
+		// Make an AJAX request to fetch vessel info
+		$.ajax({
+			url: '<?= base_url('booking/booking_info') ?>', // Adjust the endpoint as necessary
+			method: 'POST',
+			data: {
+				id: id
+			},
+			dataType: 'html',
+			success: function(response) {
+				// Update the content-area with the response
+				$('#content-area').html(response);
+			},
+			error: function(xhr, status, error) {
+				console.error('Error fetching vessel info:', error);
+			}
+		});
+	}
 </script>

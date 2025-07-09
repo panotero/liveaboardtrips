@@ -163,6 +163,61 @@ class Manage_model extends CI_Model
 		return $counts;
 	}
 
+	public function get_recent_booking($partner_id)
+	{
+
+		$this->db->select('
+    bt.id AS bt_id,
+    bt.ref_code AS bt_ref_code,
+    bt.user_id AS bt_user_id,
+    bt.booking_details_id AS bt_booking_details_id,
+    bt.trip_year AS bt_trip_year,
+    sbs.status AS sbs_status,
+    bt.booking_date AS bt_booking_date,
+    bt.schedule_id AS bt_schedule_id,
+    bt.partner_id AS bt_partner_id,
+    bui.id AS bui_id,
+    bui.ref_code AS bui_ref_code,
+    bui.first_name AS bui_first_name,
+    bui.last_name AS bui_last_name,
+    bui.address_1 AS bui_address_1,
+    bui.address_2 AS bui_address_2,
+    bui.country AS bui_country,
+    bui.city AS bui_city,
+    bui.mobile AS bui_mobile,
+    bui.email AS bui_email,
+    bui.phone AS bui_phone,
+    bui.guest_list AS bui_guest_list,
+    s.id AS s_id,
+    s.schedule_title AS s_schedule_title,
+    s.schedule_from AS s_schedule_from,
+    s.schedule_to AS s_schedule_to,
+    s.vessel_id AS s_vessel_id,
+    s.itinerary AS s_itinerary,
+    s.destination_id AS s_destination_id,
+    s.partner_id AS s_partner_id,
+    dt.id AS dt_id,
+    dt.destination_name AS dt_destination_name,
+    dt.destination_country AS dt_destination_country,
+    dt.destination_popularity_points AS dt_destination_popularity_points,
+    dt.vessel_id_list AS dt_vessel_id_list,
+    dt.partner_id AS dt_partner_id,
+    dt.destination_photos AS dt_destination_photos,
+    dt.destination_thumbnail AS dt_destination_thumbnail,
+    dt.description AS dt_description
+');
+		$this->db->from('booking_table AS bt');
+		$this->db->join('booking_userinfo AS bui', 'bui.ref_code = bt.ref_code AND bui.id = bt.user_id');
+		$this->db->join('schedules AS s', 's.id = bt.schedule_id');
+		$this->db->join('destination_table AS dt', 'dt.id = s.destination_id');
+		$this->db->join('settings_booking_status AS sbs', 'sbs.id = bt.status');
+		$this->db->where('bt.partner_id', $partner_id);
+		$this->db->order_by('bt_id', 'DESC');
+		$this->db->limit(5);
+		$result = $this->db->get()->result_array();
+		return $result;
+	}
+
 	public function get_admin_info($partner_id)
 	{
 		$this->db->select('

@@ -43,6 +43,11 @@ class Admin extends CI_Controller
 
 	public function adminlogin()
 	{
+		$loggedin = $this->session->userdata('logged_in');
+		// var_dump($loggedin);
+		if (isset($loggedin)) {
+			redirect(base_url('admin/dashboard'));
+		}
 		//fetch all userinfo
 		$this->load->view('/admin/login_page');
 	}
@@ -111,6 +116,7 @@ class Admin extends CI_Controller
 
 		$partner_id = $this->session->userdata('partner_id');
 		$this->data['admin_info'] = $this->Manage_model->get_admin_info($partner_id);
+		$this->data['recent_bookings'] = $this->Manage_model->get_recent_booking($partner_id);
 		$dashboard = $this->load->view('/admin/content_dashboard', $this->data);
 		return $dashboard;
 	}
